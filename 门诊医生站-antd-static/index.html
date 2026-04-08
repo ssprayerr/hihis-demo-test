@@ -1,0 +1,2132 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>门诊医生站主页 - Ant Design Static</title>
+    <link
+      rel="stylesheet"
+      href="./vendor/reset.min.css"
+    />
+    <style>
+      :root {
+        --theme-blue: #2469f2;
+        --theme-blue-hover: #4d94ff;
+        --theme-blue-soft: #ebf4ff;
+        --theme-green: #29a33e;
+        --theme-bg: #d2d3d6;
+        --theme-panel: #ffffff;
+        --theme-line: #dbdbdb;
+        --theme-line-soft: #eeeeee;
+        --theme-text: #262626;
+        --theme-text-2: #666666;
+        --theme-text-3: #999999;
+        --theme-danger: #e03134;
+        --theme-warning: #e5710b;
+        --theme-success: #29a33e;
+        --theme-gap: 8px;
+        --theme-radius: 4px;
+        --theme-header: 48px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+        background: var(--theme-bg);
+        color: var(--theme-text);
+        font-family: "Microsoft YaHei", "PingFang SC", "Helvetica Neue", Arial,
+          sans-serif;
+      }
+
+      body {
+        overflow: hidden;
+      }
+
+      #root {
+        width: 100%;
+        height: 100vh;
+      }
+
+      .page-shell {
+        position: relative;
+        width: 100%;
+        height: 100vh;
+        background: var(--theme-bg);
+        overflow: hidden;
+      }
+
+      .app-topbar {
+        height: 48px;
+        padding: 0 16px;
+        background: linear-gradient(90deg, #2f6ae8 0%, #2b68e9 55%, #2a6aea 100%);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        color: #fff;
+        gap: 16px;
+      }
+
+      .topbar-left,
+      .topbar-right,
+      .topbar-brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .topbar-left {
+        min-width: 0;
+        flex: 1 1 auto;
+        overflow: hidden;
+      }
+
+      .topbar-right {
+        flex: 0 0 auto;
+        white-space: nowrap;
+      }
+
+      .brand-mark {
+        width: 28px;
+        height: 28px;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 3px;
+      }
+
+      .brand-mark span {
+        display: block;
+        border-radius: 3px;
+        background: rgba(255, 255, 255, 0.96);
+      }
+
+      .topbar-home {
+        font-size: 14px;
+        line-height: 1;
+        white-space: nowrap;
+      }
+
+      .doctor-entry-tab {
+        height: 32px;
+        padding: 0 14px;
+        border-radius: 6px 6px 0 0;
+        background: #fff;
+        color: var(--theme-blue);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+      }
+
+      .doctor-entry-tab--ghost {
+        background: rgba(255, 255, 255, 0.14);
+        color: rgba(255, 255, 255, 0.88);
+      }
+
+      .close-mark {
+        opacity: 0.7;
+        font-size: 12px;
+      }
+
+      .topbar-user {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        white-space: nowrap;
+      }
+
+      .topbar-avatar {
+        border: 2px solid rgba(255, 255, 255, 0.45);
+      }
+
+      .workspace {
+        position: relative;
+        height: calc(100vh - 48px);
+        padding-right: 64px;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        min-width: 0;
+        min-height: 0;
+      }
+
+      .strip {
+        background: #fff;
+        border-bottom: 1px solid var(--theme-line);
+        padding: 0 8px;
+      }
+
+      .strip-patient {
+        height: 40px;
+        padding: 0 8px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        background: #ebf4ff;
+        min-width: 0;
+        flex-wrap: nowrap;
+      }
+
+      .strip-summary {
+        min-height: 48px;
+        padding: 0 8px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        min-width: 0;
+        flex-wrap: nowrap;
+      }
+
+      .patient-left,
+      .patient-right,
+      .summary-actions,
+      .summary-links,
+      .summary-major {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .patient-left {
+        min-width: 0;
+        flex: 1;
+        flex-wrap: nowrap;
+        overflow: hidden;
+      }
+
+      .patient-right {
+        flex: 0 0 auto;
+        flex-wrap: nowrap;
+        white-space: nowrap;
+      }
+
+      .patient-tabs-wrap {
+        min-width: 0;
+        flex: 1;
+        overflow: hidden;
+      }
+
+      .patient-card-tabs .ant-tabs-nav,
+      .doctor-card-tabs .ant-tabs-nav {
+        margin: 0;
+      }
+
+      .patient-card-tabs .ant-tabs-tab,
+      .doctor-card-tabs .ant-tabs-tab {
+        height: 40px;
+        border-radius: 0 !important;
+        border-top: 0 !important;
+        margin: 0 !important;
+      }
+
+      .patient-card-tabs .ant-tabs-tab-active {
+        background: #fff !important;
+      }
+
+      .patient-stats {
+        display: inline-flex;
+        align-items: center;
+        border: 1px solid var(--theme-line);
+        border-radius: 4px;
+        overflow: hidden;
+        background: #fff;
+      }
+
+      .patient-stats-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 0 12px;
+        height: 28px;
+        font-size: 14px;
+        color: var(--theme-text-2);
+      }
+
+      .patient-stats-item + .patient-stats-item {
+        border-left: 1px solid var(--theme-line);
+      }
+
+      .patient-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        display: inline-block;
+      }
+
+      .patient-dot--green {
+        background: #20b26b;
+      }
+
+      .patient-dot--orange {
+        background: #f3ab1b;
+      }
+
+      .patient-dot--red {
+        background: #e03134;
+      }
+
+      .summary-main {
+        display: flex;
+        align-items: center;
+        flex-wrap: nowrap;
+        gap: 8px;
+        min-width: 0;
+        flex: 1 1 auto;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+
+      .summary-name {
+        font-weight: 700;
+        font-size: 18px;
+        line-height: 1;
+      }
+
+      .summary-meta {
+        color: var(--theme-text-2);
+        font-size: 12px;
+      }
+
+      .summary-number {
+        color: var(--theme-text);
+        font-weight: 700;
+        font-size: 14px;
+      }
+
+      .summary-tag-warn {
+        border-radius: 10px;
+        padding-inline: 8px;
+        flex: 0 0 auto;
+      }
+
+      .summary-actions {
+        flex: 0 0 auto;
+        flex-wrap: nowrap;
+        justify-content: flex-end;
+        white-space: nowrap;
+      }
+
+      .summary-links,
+      .summary-major {
+        flex: 0 0 auto;
+        flex-wrap: nowrap;
+        white-space: nowrap;
+      }
+
+      .content-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        padding: 8px;
+        flex: 1;
+        min-height: 0;
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+      }
+
+      .record-panel,
+      .diagnosis-panel,
+      .orders-panel {
+        border-radius: 0 !important;
+        box-shadow: none !important;
+      }
+
+      .record-panel .ant-card-body,
+      .diagnosis-panel .ant-card-body,
+      .orders-panel .ant-card-body {
+        padding: 0 !important;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        min-height: 0;
+      }
+
+      .record-panel-wrap,
+      .right-stack {
+        min-width: 0;
+        min-height: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      .right-stack {
+        display: grid;
+        grid-template-rows: 166px minmax(0, 1fr);
+        gap: 8px;
+        overflow: hidden;
+      }
+
+      .panel-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 8px 12px;
+      }
+
+      .record-head {
+        background: #ebf4ff;
+        border-bottom: 1px solid var(--theme-line);
+      }
+
+      .record-vitals {
+        height: 28px;
+        padding: 0 12px;
+        border-radius: 14px;
+        background: #dbe9fb;
+        display: inline-flex;
+        align-items: center;
+        gap: 16px;
+        font-size: 12px;
+        color: var(--theme-text-2);
+      }
+
+      .record-vitals strong {
+        color: var(--theme-text);
+        font-weight: 400;
+        font-size: 14px;
+      }
+
+      .record-toolbar {
+        padding: 8px 12px;
+        border-bottom: 1px solid var(--theme-line-soft);
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        flex-wrap: wrap;
+      }
+
+      .record-body {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 36px;
+        height: 100%;
+        flex: 1 1 auto;
+        background: #f2f3f5;
+        overflow: hidden;
+      }
+
+      .record-paper-stage {
+        position: relative;
+        padding: 12px 0 18px;
+        background: #e6e7ea;
+        overflow-x: auto;
+        overflow-y: auto;
+        min-height: 0;
+      }
+
+      .record-timeline {
+        position: sticky;
+        left: 0;
+        top: 0;
+        z-index: 2;
+        margin: 0 0 8px 20px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0 14px 0 12px;
+        height: 28px;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(2px);
+      }
+
+      .record-timeline::before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #6bc241;
+      }
+
+      .record-paper {
+        width: 794px;
+        min-height: 940px;
+        margin: 0 auto;
+        background: #fff;
+        box-shadow: inset 0 0 0 1px #f1f1f1;
+        padding: 30px 48px 56px;
+        color: #222;
+        font-family: "Songti SC", "SimSun", serif;
+      }
+
+      .record-paper h1 {
+        margin: 0 0 10px;
+        text-align: center;
+        font-size: 17px;
+        font-weight: 700;
+      }
+
+      .record-paper-header {
+        display: grid;
+        grid-template-columns: repeat(5, max-content);
+        justify-content: space-between;
+        gap: 10px 18px;
+        font-size: 12px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #cfcfcf;
+      }
+
+      .record-paper-header em,
+      .record-em-red {
+        color: #c72a2a;
+        font-style: normal;
+      }
+
+      .record-paragraphs {
+        font-size: 12px;
+        line-height: 1.72;
+        padding-top: 12px;
+      }
+
+      .record-paragraphs p {
+        margin: 0;
+      }
+
+      .record-section-title {
+        color: #245bcc;
+      }
+
+      .record-side-tabs {
+        background: linear-gradient(180deg, #f9fafc 0%, #eceef2 100%);
+        border-left: 1px solid var(--theme-line);
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .record-side-tab {
+        width: 36px;
+        min-height: 56px;
+        border-bottom: 1px solid #dcdfe3;
+        color: #585858;
+        font-size: 14px;
+        line-height: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        writing-mode: vertical-rl;
+        letter-spacing: 2px;
+        background: linear-gradient(180deg, #f8fafc 0%, #eceef2 100%);
+      }
+
+      .record-side-tab.active {
+        background: #fff;
+      }
+
+      .diagnosis-actions,
+      .orders-actions,
+      .orders-quick-actions,
+      .orders-secondary-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .action-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        color: #2469f2;
+        font-size: 14px;
+      }
+
+      .diagnosis-table-wrap,
+      .orders-table-wrap {
+        padding: 0 8px 8px;
+        min-height: 0;
+      }
+
+      .diagnosis-table-wrap {
+        flex: 1 1 auto;
+        overflow: auto;
+      }
+
+      .orders-table-wrap {
+        flex: 1 1 auto;
+        overflow-x: auto;
+        overflow-y: auto;
+      }
+
+      .orders-table-wrap .ant-table-wrapper {
+        height: 100%;
+      }
+
+      .orders-table-wrap .ant-spin-nested-loading,
+      .orders-table-wrap .ant-spin-container,
+      .orders-table-wrap .ant-table,
+      .orders-table-wrap .ant-table-container {
+        height: 100%;
+      }
+
+      .diagnosis-table-wrap .ant-table,
+      .orders-table-wrap .ant-table {
+        border-radius: 0 !important;
+      }
+
+      .diagnosis-table-wrap .ant-table-thead > tr > th,
+      .orders-table-wrap .ant-table-thead > tr > th {
+        height: 32px;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+        font-weight: 700;
+        color: var(--theme-text);
+      }
+
+      .diagnosis-table-wrap .ant-table-tbody > tr > td,
+      .orders-table-wrap .ant-table-tbody > tr > td {
+        height: 32px;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+      }
+
+      .diagnosis-table-wrap .ant-table-cell,
+      .orders-table-wrap .ant-table-cell {
+        white-space: nowrap;
+        vertical-align: middle;
+      }
+
+      .diagnosis-table-wrap .ant-input,
+      .diagnosis-table-wrap .ant-select-selector,
+      .diagnosis-table-wrap .ant-picker,
+      .orders-filter-input.ant-input {
+        border-radius: 4px !important;
+      }
+
+      .compact-cell {
+        padding: 2px 0 !important;
+      }
+
+      .toolbar-note {
+        color: var(--theme-text-3);
+      }
+
+      .orders-tabs-row,
+      .orders-toolbar-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+      }
+
+      .orders-tabs-row {
+        border-bottom: 1px solid var(--theme-line);
+      }
+
+      .orders-toolbar-row {
+        border-bottom: 1px solid var(--theme-line-soft);
+      }
+
+      .orders-tab-inline {
+        min-width: 0;
+        flex: 1;
+      }
+
+      .orders-card-tabs .ant-tabs-nav {
+        margin: 0 !important;
+      }
+
+      .orders-card-tabs .ant-tabs-tab {
+        padding: 6px 16px !important;
+      }
+
+      .orders-card-tabs .ant-tabs-content-holder {
+        display: none;
+      }
+
+      .orders-aux-input {
+        width: 340px;
+      }
+
+      .orders-footer {
+        flex: 0 0 auto;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        padding: 0 12px;
+        border-top: 1px solid var(--theme-line);
+        font-size: 12px;
+        color: var(--theme-text);
+        background: #fff;
+        white-space: nowrap;
+        overflow: auto;
+      }
+
+      .amount-strong {
+        font-weight: 700;
+      }
+
+      .side-toolbar {
+        position: absolute;
+        top: 40px;
+        right: 0;
+        bottom: 0;
+        width: 64px;
+        background: #f6f7f9;
+        border-left: 1px solid var(--theme-line);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        z-index: 20;
+      }
+
+      .side-toolbar-head {
+        height: 40px;
+        padding: 0 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-bottom: 1px solid var(--theme-line);
+        font-size: 14px;
+        font-weight: 700;
+        gap: 4px;
+      }
+
+      .side-toolbar-items {
+        flex: 1;
+        overflow-x: hidden;
+        overflow-y: auto;
+      }
+
+      .side-toolbar-item {
+        height: 42px;
+        padding: 0 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-bottom: 1px solid var(--theme-line);
+        font-size: 12px;
+        color: #444;
+        text-align: center;
+        line-height: 1.2;
+      }
+
+      .side-toolbar-item.active {
+        background: #e8f1ff;
+        color: var(--theme-blue);
+        font-weight: 700;
+      }
+
+      .summary-links .ant-btn-link {
+        padding-inline: 2px;
+      }
+
+      .summary-major .ant-btn,
+      .patient-right .ant-btn,
+      .orders-tabs-row .ant-btn,
+      .panel-header .ant-btn {
+        box-shadow: none;
+      }
+
+      .ant-input-affix-wrapper,
+      .ant-input,
+      .ant-select-selector,
+      .ant-picker,
+      .ant-btn {
+        font-size: 14px;
+      }
+
+      .ant-badge-count {
+        box-shadow: none !important;
+      }
+
+      .patient-input {
+        width: 160px;
+      }
+
+      .patient-card-tabs .ant-tabs-tab-btn,
+      .doctor-card-tabs .ant-tabs-tab-btn,
+      .orders-card-tabs .ant-tabs-tab-btn {
+        font-size: 14px;
+      }
+
+      .patient-card-tabs .ant-tabs-tab-active .ant-tabs-tab-btn {
+        font-weight: 700;
+      }
+
+      .muted-text {
+        color: var(--theme-text-3);
+      }
+
+      .ops-icons {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--theme-blue);
+        font-size: 16px;
+      }
+
+      .table-status-tag {
+        min-width: 46px;
+        text-align: center;
+        border-radius: 4px;
+      }
+
+      .icon-text-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .diagnosis-actions .ant-btn-link,
+      .orders-actions .ant-btn-link,
+      .orders-secondary-actions .ant-btn-link,
+      .record-toolbar .ant-btn-link {
+        height: 24px;
+        padding: 0 4px;
+      }
+
+      .diagnosis-panel .ant-table-wrapper,
+      .orders-panel .ant-table-wrapper {
+        overflow: hidden;
+        height: 100%;
+      }
+
+      .record-panel,
+      .diagnosis-panel,
+      .orders-panel {
+        height: 100%;
+      }
+
+      .referral-modal {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .referral-meta {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+        padding: 12px 16px;
+        background: #f2f8ff;
+        border: 1px solid #d9e8ff;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+
+      .referral-meta strong {
+        color: var(--theme-text);
+      }
+
+      .referral-filters {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr)) auto auto;
+        gap: 12px;
+        align-items: end;
+      }
+
+      .referral-field {
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .referral-field label {
+        font-size: 12px;
+        color: var(--theme-text-2);
+      }
+
+      .referral-table-wrap {
+        border: 1px solid var(--theme-line);
+        border-radius: 4px;
+        overflow: hidden;
+      }
+
+      .referral-helper {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        font-size: 12px;
+        color: var(--theme-text-2);
+      }
+
+      .ant-card-head {
+        min-height: unset !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script src="./vendor/react.production.min.js"></script>
+    <script src="./vendor/react-dom.production.min.js"></script>
+    <script src="./vendor/dayjs.min.js"></script>
+    <script src="./vendor/antd.min.js"></script>
+    <script src="./vendor/ant-design-icons.umd.min.js"></script>
+    <script src="./vendor/babel.min.js"></script>
+
+    <script type="text/babel">
+      const {
+        ConfigProvider,
+        App: AntApp,
+        Button,
+        Input,
+        Tabs,
+        Tag,
+        Badge,
+        Avatar,
+        Space,
+        Radio,
+        Card,
+        Table,
+        Select,
+        Checkbox,
+        Modal,
+        DatePicker,
+      } = antd;
+
+      const Icons = window.icons || window.antdIcons || {};
+      const {
+        MenuFoldOutlined,
+        BellOutlined,
+        SearchOutlined,
+        IdcardOutlined,
+        MenuOutlined,
+        ReloadOutlined,
+        HistoryOutlined,
+        FileTextOutlined,
+        GlobalOutlined,
+        PlusCircleOutlined,
+        RollbackOutlined,
+        StopOutlined,
+        StarOutlined,
+        AppstoreOutlined,
+        EyeOutlined,
+        DeleteOutlined,
+        PrinterOutlined,
+        EllipsisOutlined,
+        SaveOutlined,
+        CheckCircleOutlined,
+        PlusOutlined,
+        CalendarOutlined,
+        MedicineBoxOutlined,
+        ExperimentOutlined,
+        FileDoneOutlined,
+        AuditOutlined,
+        ScissorOutlined,
+        SafetyCertificateOutlined,
+        MoreOutlined,
+        LeftCircleOutlined,
+        RightCircleOutlined,
+        UpCircleOutlined,
+        DownCircleOutlined,
+      } = Icons;
+
+      const themeConfig = {
+        token: {
+          colorPrimary: "#2469f2",
+          colorInfo: "#2469f2",
+          colorSuccess: "#29a33e",
+          colorWarning: "#e5710b",
+          colorError: "#e03134",
+          colorTextBase: "#262626",
+          borderRadius: 4,
+          colorPrimaryHover: "#4d94ff",
+          colorPrimaryActive: "#215ed9",
+          colorSuccessBg: "#f2fff4",
+          colorSuccessBgHover: "#d4fad9",
+          colorLinkActive: "#215ed9",
+          colorLinkHover: "#4d94ff",
+          colorBorder: "#dbdbdb",
+          wireframe: false,
+          colorBorderSecondary: "#eeeeee",
+          boxShadowSecondary: "0 0 16px 0 rgba(0, 0, 0, 0.12)",
+          colorText: "#262626",
+          colorTextSecondary: "#666666",
+          colorTextTertiary: "#999999",
+          colorPrimaryTextHover: "#4d94ff",
+          colorPrimaryTextActive: "#215ed9",
+          colorSuccessHover: "#40b854",
+          colorSuccessTextHover: "#40b854",
+          colorSuccessTextActive: "#187828",
+          colorSuccessActive: "#187828",
+          colorPrimaryBg: "#f2f8ff",
+          colorPrimaryBgHover: "#e0efff",
+          colorPrimaryBorder: "#bddcff",
+          colorPrimaryBorderHover: "#99c9ff",
+          colorSuccessBorder: "#b2edba",
+          colorSuccessBorderHover: "#8fdb99",
+          colorWarningHover: "#f78e31",
+          colorWarningActive: "#c2600a",
+          colorWarningTextActive: "#c2600a",
+          colorWarningTextHover: "#f78e31",
+          colorWarningBg: "#fff5eb",
+          colorWarningBgHover: "#ffecd9",
+          colorWarningBorder: "#ffdbb8",
+          colorWarningBorderHover: "#ffc78f",
+          colorErrorHover: "#e55350",
+          colorErrorTextHover: "#e55350",
+          colorErrorTextActive: "#bd2628",
+          colorErrorActive: "#bd2628",
+          colorErrorBg: "#fff3f2",
+          colorErrorBgHover: "#ffe7e5",
+          colorErrorBorder: "#ffcfcc",
+          colorErrorBorderHover: "#ffaaa6",
+        },
+        components: {
+          Table: {
+            borderColor: "rgb(219,219,219)",
+            headerBg: "rgb(238,238,238)",
+            rowHoverBg: "rgb(242,248,255)",
+            rowSelectedBg: "rgb(224,239,255)",
+            headerBorderRadius: 0,
+            cellPaddingInline: 8,
+            cellPaddingInlineSM: 4,
+            cellPaddingBlock: 8,
+          },
+          Button: {
+            defaultShadow: "",
+            dangerShadow: "",
+            defaultColor: "rgb(38,38,38)",
+            defaultBorderColor: "rgb(219,219,219)",
+            colorTextDisabled: "rgb(153,153,153)",
+            textTextActiveColor: "rgb(38,38,38)",
+            textHoverBg: "rgb(245,245,245)",
+            defaultHoverBg: "rgb(224,239,255)",
+            defaultHoverBorderColor: "rgb(36,105,242)",
+            defaultHoverColor: "rgb(36,105,242)",
+            iconGap: 4,
+            primaryShadow: "",
+            defaultBgDisabled: "rgb(238,238,238)",
+            colorBgContainerDisabled: "rgb(238,238,238)",
+            colorBgContainer: "rgb(255,255,255)",
+            colorError: "rgb(224,49,52)",
+            dashedBgDisabled: "rgb(238,238,238)",
+            defaultActiveBg: "rgb(189,220,255)",
+          },
+          Checkbox: { borderRadiusSM: 2 },
+          Form: {
+            labelColor: "rgb(38,38,38)",
+            labelRequiredMarkColor: "rgb(224,49,52)",
+            itemMarginBottom: 16,
+            labelColonMarginInlineStart: 2,
+          },
+          Input: {
+            activeShadow: "0",
+            errorActiveShadow: "0",
+            warningActiveShadow: "0",
+            colorBgContainerDisabled: "rgb(245,245,245)",
+            colorTextDisabled: "rgb(38,38,38)",
+            fontSize: 14,
+            activeBorderColor: "rgb(36,105,242)",
+            hoverBorderColor: "rgb(36,105,242)",
+          },
+          Select: {
+            activeBorderColor: "rgb(36,105,242)",
+            activeOutlineColor: "rgba(255,255,255,0)",
+            hoverBorderColor: "rgb(36,105,242)",
+            optionSelectedColor: "rgb(36,105,242)",
+            optionSelectedBg: "rgb(224,239,255)",
+            optionActiveBg: "rgb(242,248,255)",
+            multipleItemColorDisabled: "rgb(153,153,153)",
+            colorTextDisabled: "rgb(153,153,153)",
+            colorTextPlaceholder: "rgb(153,153,153)",
+          },
+          Tree: {
+            borderRadiusSM: 2,
+          },
+          Alert: {
+            withDescriptionPadding: "16px 16px",
+            defaultPadding: "4px 8px",
+            colorErrorBorder: "rgba(255,207,204,0)",
+            colorSuccessBorder: "rgba(178,237,186,0)",
+            colorWarningBorder: "rgba(255,220,184,0)",
+            colorInfoBorder: "rgba(22,119,255,0)",
+          },
+          Menu: {
+            itemBorderRadius: 0,
+          },
+          Message: {
+            contentPadding: "8px 16px",
+          },
+          Tooltip: {
+            colorBgSpotlight: "rgba(0,0,0,0.9)",
+            colorTextLightSolid: "rgb(255,255,255)",
+            maxWidth: 400,
+          },
+          Pagination: {
+            itemActiveColor: "rgb(36,105,242)",
+            itemActiveColorHover: "rgb(77,148,255)",
+            itemBg: "rgb(245,245,245)",
+          },
+          Dropdown: {
+            colorTextDisabled: "rgb(153,153,153)",
+          },
+          DatePicker: {
+            activeBorderColor: "rgb(36,105,242)",
+            colorTextPlaceholder: "rgb(153,153,153)",
+            warningActiveShadow: "",
+            errorActiveShadow: "",
+            activeShadow: "",
+            colorWarningBorderHover: "rgb(247,142,49)",
+            colorErrorBorderHover: "rgb(229,83,80)",
+          },
+          InputNumber: {
+            activeBorderColor: "rgb(36,105,242)",
+            handleHoverColor: "rgb(36,105,242)",
+            hoverBorderColor: "rgb(36,105,242)",
+            activeShadow: "",
+            errorActiveShadow: "",
+            warningActiveShadow: "",
+            colorWarningBorderHover: "rgb(247,142,49)",
+            colorErrorBorderHover: "rgb(229,83,80)",
+          },
+          Tabs: {
+            cardGutter: 0,
+            colorBgContainer: "rgb(255,255,255)",
+            inkBarColor: "rgb(36,105,242)",
+            itemSelectedColor: "rgb(36,105,242)",
+            itemHoverColor: "rgb(77,148,255)",
+            cardPadding: "8px 16px",
+          },
+          Breadcrumb: {
+            separatorMargin: 4,
+          },
+          Layout: {
+            headerHeight: 48,
+            footerPadding: "24px 48px",
+            headerPadding: "0 16px",
+          },
+          Cascader: {
+            optionSelectedColor: "rgb(36,105,242)",
+            colorWhite: "rgb(255,255,255)",
+            optionPadding: "4px 12px",
+            colorHighlight: "rgb(36,105,242)",
+          },
+          Mentions: {
+            activeShadow: "",
+            errorActiveShadow: "",
+            warningActiveShadow: "",
+          },
+          Radio: {
+            buttonSolidCheckedActiveBg: "rgb(33,94,217)",
+            buttonColor: "rgb(38,38,38)",
+            colorTextDisabled: "rgb(204,204,204)",
+            buttonSolidCheckedHoverBg: "rgb(77,148,255)",
+            buttonSolidCheckedBg: "rgb(36,105,242)",
+          },
+          Tag: {
+            defaultColor: "rgb(38,38,38)",
+          },
+          Rate: {
+            starColor: "rgb(247,142,49)",
+            starBg: "rgb(219,219,219)",
+            starSize: 24,
+            starSizeSM: 16,
+            starSizeLG: 28,
+            starHoverScale: "scale(1.1)",
+          },
+          Progress: {
+            remainingColor: "rgb(238,238,238)",
+            defaultColor: "rgb(36,105,242)",
+            circleTextColor: "rgb(38,38,38)",
+          },
+          Notification: {
+            width: 360,
+          },
+          Result: {
+            iconFontSize: 64,
+            titleFontSize: 18,
+            extraMargin: "24px 0 0 0",
+          },
+          TreeSelect: {
+            nodeSelectedColor: "rgb(36,105,242)",
+            nodeSelectedBg: "rgb(224,239,255)",
+            nodeHoverBg: "rgb(242,248,255)",
+            nodeHoverColor: "rgb(38,38,38)",
+          },
+          Transfer: {
+            itemPaddingBlock: 4,
+            listWidth: 200,
+            listHeight: 360,
+          },
+          Slider: {
+            railBg: "rgb(238,238,238)",
+          },
+        },
+      };
+
+      const diagnosisRows = [
+        {
+          key: "1",
+          subject: "西医",
+          disease: "急性扁桃体炎",
+          clinicName: "急性扁桃体炎",
+          remark: "",
+          date: "2023-12-09",
+          suspicious: true,
+          primary: true,
+        },
+        {
+          key: "2",
+          subject: "",
+          disease: "",
+          clinicName: "",
+          remark: "",
+          date: "",
+          suspicious: false,
+          primary: false,
+        },
+      ];
+
+      const orderRows = [
+        {
+          key: "1",
+          status: "签署",
+          dept: "中心药站",
+          order: "维生素C片(10mg*10片/盒) (A危)  1片【14片】口服 每日两次【7天】",
+          amount: "37.50",
+          feeType: "杭州市医保",
+          insurance: "甲",
+        },
+        {
+          key: "2",
+          status: "新开立",
+          dept: "中心药站",
+          order: "盐酸左氧沙星...  100ml【14支】静脉滴注(穿刺)每日两次【7天】",
+          amount: "1610.00",
+          feeType: "杭州市医保",
+          insurance: "乙",
+        },
+        {
+          key: "3",
+          status: "签署",
+          dept: "检查科",
+          order: "门诊CT-2(右膝关节 平扫+增强)",
+          amount: "93.00",
+          feeType: "杭州市医保",
+          insurance: "",
+        },
+        {
+          key: "4",
+          status: "签署",
+          dept: "检验科",
+          order: "ml血凝常规(血清)",
+          amount: "10.00",
+          feeType: "自费",
+          insurance: "甲",
+        },
+        {
+          key: "5",
+          status: "新开立",
+          dept: "检验科",
+          order: "血常规（执行门急诊）（血清）",
+          amount: "43.00",
+          feeType: "自费",
+          insurance: "",
+        },
+        {
+          key: "6",
+          status: "新开立",
+          dept: "静配中心",
+          order: "氯化钠 / 氯化钠注射液  30ml【2瓶】 静脉注射 每日两次【7天】",
+          amount: "374.22",
+          feeType: "自费",
+          insurance: "甲",
+        },
+      ];
+
+      const sideTools = [
+        "一体",
+        "病历",
+        "诊断",
+        "医嘱",
+        "日间手术",
+        "门诊手术",
+        "就诊历史",
+        "复诊预约",
+        "发热登记",
+        "便民用药",
+        "皮试管理",
+        "医保就诊登记",
+        "检验报告",
+        "影像报告",
+        "肺功能",
+        "病理报告",
+        "内镜报告",
+        "双向转诊",
+        "代办人",
+        "其他报卡",
+        "医技预约",
+        "复诊预约",
+      ];
+
+      const recordParagraphs = [
+        "现病史：病史明确前，病人未来，【目前无头痛、头昏等，病情平稳，配药。】",
+        "既往史：平素体健；【否认】肝炎史；【否认】结核史；【否认】疟疾史；【否认】高血压病史；【否认】糖尿病史；【否认】冠心病史；【否认】脑血管病史；【否认】手术史；【否认】输血史；【无过敏史；{预防接种史不详。】",
+        "个人史：基本同前。",
+        "流行病史：",
+        "1、【否认】28天内有中高风险区所在县（市、区）旅行史、边境城市旅居史、境外旅居史、集中隔离点工作史、进口冷链监管仓或加工工作史、口岸工作史；",
+        "2、【否认】28天内有与新型冠状病毒患者、无症状感染者及上述人员接触史；",
+        "3、【否认】28天内有管控、次密接及其他重点管控人员解除管控后有症状的人员；",
+        "4、【否认】有聚集性发病（14天内在小范围如家庭、办公室、学校班级等场所，出现2例及以上发热和/或呼吸道症状的病例）。",
+        "5、新冠疫苗接种情况：【否认】。",
+        "体格检查：体温：【体温】℃，病人未来。",
+        "专科检查：病人未来。",
+        "诊断：{1.Satoxoshi综合征}",
+        "处理：{请在此处输入其他处理措施，不填不打印}",
+        "<检验>",
+        "1、全血细胞分析(CBC)",
+        "2、血需氧菌培养及鉴定",
+        "<检查>",
+        "1、CT腹部平扫（肝脏、胆囊、脾脏）",
+        "<西药>",
+        "1、氯化钠溶液0.9%      200ml                           静脉滴注        QD        3天",
+        "2、头孢拉定              1mg",
+        "3、维生素C               100mg                          口服            BID       7天",
+        "<草药>",
+        "1、喘咳汤共7剂 每日1剂，水煎400ml，早晚两次空腹温服",
+        "<治疗>",
+        "1、大换药",
+      ];
+
+      const diagnosisColumns = [
+        {
+          title: "操作",
+          dataIndex: "key",
+          width: 72,
+          fixed: "left",
+          render: () => (
+            <span className="ops-icons">
+              <PlusCircleOutlined />
+              <DeleteOutlined />
+              <AppstoreOutlined />
+            </span>
+          ),
+        },
+        {
+          title: <span><span style={{ color: "#e03134" }}>* </span>学科类型</span>,
+          dataIndex: "subject",
+          width: 112,
+          render: (value) => (
+            <Select
+              size="small"
+              value={value || undefined}
+              placeholder="请选择"
+              options={[{ value: "西医", label: "西医" }, { value: "中医", label: "中医" }]}
+              style={{ width: "100%" }}
+            />
+          ),
+        },
+        {
+          title: <span><span style={{ color: "#e03134" }}>* </span>疾病名称</span>,
+          dataIndex: "disease",
+          width: 200,
+          render: (value) => (
+            <Input size="small" value={value} placeholder="请输入" />
+          ),
+        },
+        {
+          title: <span><span style={{ color: "#e03134" }}>* </span>临床诊断名称</span>,
+          dataIndex: "clinicName",
+          width: 200,
+          render: (value) => (
+            <Input size="small" value={value} placeholder="请输入" />
+          ),
+        },
+        {
+          title: "补充说明",
+          dataIndex: "remark",
+          width: 170,
+          render: (value) => (
+            <Input size="small" value={value} placeholder="请输入" />
+          ),
+        },
+        {
+          title: "患病日期",
+          dataIndex: "date",
+          width: 150,
+          render: (value) => (
+            <Input
+              size="small"
+              value={value}
+              placeholder="请选择"
+              prefix={<CalendarOutlined />}
+            />
+          ),
+        },
+        {
+          title: "疑似",
+          dataIndex: "suspicious",
+          width: 60,
+          align: "center",
+          render: (value) => <Checkbox checked={value} />,
+        },
+      ];
+
+      const orderColumns = [
+        {
+          title: "",
+          dataIndex: "select",
+          width: 32,
+          align: "center",
+          fixed: "left",
+          render: () => <Checkbox />,
+        },
+        {
+          title: "序",
+          dataIndex: "key",
+          width: 44,
+          align: "center",
+          fixed: "left",
+        },
+        {
+          title: "状态",
+          dataIndex: "status",
+          width: 74,
+          render: (value) => {
+            const color = value === "签署" ? "#66bb6a" : "#f4c342";
+            return (
+              <Tag className="table-status-tag" color={color}>
+                {value}
+              </Tag>
+            );
+          },
+        },
+        {
+          title: "执行科室",
+          dataIndex: "dept",
+          width: 96,
+        },
+        {
+          title: "医嘱",
+          dataIndex: "order",
+          width: 540,
+          ellipsis: true,
+          render: (value, row) => (
+            <span style={{ color: row.key === "1" || row.key === "6" ? "#e03134" : "#262626" }}>
+              {value}
+            </span>
+          ),
+        },
+        {
+          title: "金额",
+          dataIndex: "amount",
+          width: 74,
+          align: "right",
+        },
+        {
+          title: "优惠类型",
+          dataIndex: "feeType",
+          width: 110,
+        },
+        {
+          title: "保险",
+          dataIndex: "insurance",
+          width: 56,
+          align: "center",
+          render: (value) =>
+            value ? (
+              <Tag color="#63b85f" style={{ minWidth: 20, textAlign: "center" }}>
+                {value}
+              </Tag>
+            ) : (
+              ""
+            ),
+        },
+        {
+          title: "文书",
+          dataIndex: "document",
+          width: 52,
+        },
+      ];
+
+      const initialReferralFilters = {
+        date: "",
+        type: undefined,
+        hospital: undefined,
+        dept: undefined,
+        doctor: undefined,
+      };
+
+      const referralResources = [
+        {
+          key: "r1",
+          date: "2026-04-08",
+          type: "专家门诊",
+          hospital: "浙江大学医学院附属第一医院",
+          dept: "心血管内科",
+          doctor: "沈文君",
+          title: "主任医师",
+          period: "上午",
+          campus: "庆春院区",
+          remaining: 5,
+        },
+        {
+          key: "r2",
+          date: "2026-04-08",
+          type: "普通门诊",
+          hospital: "浙江大学医学院附属第二医院",
+          dept: "呼吸与危重症医学科",
+          doctor: "周宁",
+          title: "副主任医师",
+          period: "下午",
+          campus: "解放路院区",
+          remaining: 12,
+        },
+        {
+          key: "r3",
+          date: "2026-04-09",
+          type: "专家门诊",
+          hospital: "浙江大学医学院附属邵逸夫医院",
+          dept: "内分泌科",
+          doctor: "陈晓楠",
+          title: "主任医师",
+          period: "上午",
+          campus: "庆春院区",
+          remaining: 4,
+        },
+        {
+          key: "r4",
+          date: "2026-04-09",
+          type: "专病门诊",
+          hospital: "浙江省人民医院",
+          dept: "肾内科",
+          doctor: "钱一鸣",
+          title: "副主任医师",
+          period: "下午",
+          campus: "朝晖院区",
+          remaining: 7,
+        },
+        {
+          key: "r5",
+          date: "2026-04-10",
+          type: "专家门诊",
+          hospital: "浙江省中医院",
+          dept: "消化内科",
+          doctor: "杨立群",
+          title: "主任中医师",
+          period: "上午",
+          campus: "湖滨院区",
+          remaining: 3,
+        },
+        {
+          key: "r6",
+          date: "2026-04-10",
+          type: "普通门诊",
+          hospital: "宁波市第一医院",
+          dept: "神经内科",
+          doctor: "王书哲",
+          title: "主治医师",
+          period: "下午",
+          campus: "柳汀院区",
+          remaining: 15,
+        },
+        {
+          key: "r7",
+          date: "2026-04-11",
+          type: "专家门诊",
+          hospital: "温州医科大学附属第一医院",
+          dept: "胃肠外科",
+          doctor: "叶明辉",
+          title: "主任医师",
+          period: "上午",
+          campus: "南白象院区",
+          remaining: 6,
+        },
+        {
+          key: "r8",
+          date: "2026-04-11",
+          type: "专病门诊",
+          hospital: "杭州市第一人民医院",
+          dept: "风湿免疫科",
+          doctor: "顾晨曦",
+          title: "副主任医师",
+          period: "下午",
+          campus: "浣纱院区",
+          remaining: 8,
+        },
+      ];
+
+      const referralHospitalOptions = [...new Set(referralResources.map((item) => item.hospital))].map((value) => ({ value, label: value }));
+      const referralDeptOptions = [...new Set(referralResources.map((item) => item.dept))].map((value) => ({ value, label: value }));
+      const referralDoctorOptions = [...new Set(referralResources.map((item) => item.doctor))].map((value) => ({ value, label: value }));
+      const referralTypeOptions = [...new Set(referralResources.map((item) => item.type))].map((value) => ({ value, label: value }));
+
+      const referralColumns = [
+        {
+          title: "挂号日期",
+          dataIndex: "date",
+          width: 110,
+        },
+        {
+          title: "时段",
+          dataIndex: "period",
+          width: 86,
+        },
+        {
+          title: "类型",
+          dataIndex: "type",
+          width: 108,
+        },
+        {
+          title: "医院名称",
+          dataIndex: "hospital",
+          width: 260,
+        },
+        {
+          title: "科室",
+          dataIndex: "dept",
+          width: 160,
+        },
+        {
+          title: "医生",
+          dataIndex: "doctor",
+          width: 96,
+        },
+        {
+          title: "职称",
+          dataIndex: "title",
+          width: 120,
+        },
+        {
+          title: "院区",
+          dataIndex: "campus",
+          width: 120,
+        },
+        {
+          title: "剩余号源",
+          dataIndex: "remaining",
+          width: 96,
+          align: "center",
+          render: (value) => (
+            <Tag color={value > 5 ? "success" : "warning"} style={{ minWidth: 52, textAlign: "center" }}>
+              {value}个
+            </Tag>
+          ),
+        },
+      ];
+
+      const WorkbenchPage = () => {
+        const { message } = AntApp.useApp();
+        const [referralOpen, setReferralOpen] = React.useState(false);
+        const [selectedReferralKey, setSelectedReferralKey] = React.useState();
+        const [referralFilters, setReferralFilters] = React.useState(initialReferralFilters);
+        const [activeReferralFilters, setActiveReferralFilters] = React.useState(initialReferralFilters);
+
+        const filteredReferralResources = referralResources.filter((item) => {
+          if (activeReferralFilters.date && item.date !== activeReferralFilters.date) {
+            return false;
+          }
+          if (activeReferralFilters.type && item.type !== activeReferralFilters.type) {
+            return false;
+          }
+          if (activeReferralFilters.hospital && item.hospital !== activeReferralFilters.hospital) {
+            return false;
+          }
+          if (activeReferralFilters.dept && item.dept !== activeReferralFilters.dept) {
+            return false;
+          }
+          if (activeReferralFilters.doctor && item.doctor !== activeReferralFilters.doctor) {
+            return false;
+          }
+          return true;
+        });
+
+        const selectedReferral = referralResources.find((item) => item.key === selectedReferralKey);
+
+        const openReferralModal = () => {
+          setReferralOpen(true);
+          setSelectedReferralKey(undefined);
+          setReferralFilters(initialReferralFilters);
+          setActiveReferralFilters(initialReferralFilters);
+        };
+
+        const closeReferralModal = () => {
+          setReferralOpen(false);
+          setSelectedReferralKey(undefined);
+        };
+
+        const handleReferralQuery = () => {
+          setActiveReferralFilters(referralFilters);
+          setSelectedReferralKey(undefined);
+        };
+
+        const handleReferralReset = () => {
+          setReferralFilters(initialReferralFilters);
+          setActiveReferralFilters(initialReferralFilters);
+          setSelectedReferralKey(undefined);
+        };
+
+        const handleReferralConfirm = () => {
+          if (!selectedReferralKey) {
+            message.warning("请先选择转诊门诊资源");
+            return;
+          }
+          setReferralOpen(false);
+          setSelectedReferralKey(undefined);
+          message.success("已转诊成功");
+        };
+
+        return (
+          <div className="page-shell">
+                  <header className="app-topbar">
+                    <div className="topbar-left">
+                      <div className="brand-mark" aria-hidden="true">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                      </div>
+                      <MenuFoldOutlined style={{ fontSize: 18 }} />
+                      <span className="topbar-home">首页</span>
+                      <span className="doctor-entry-tab">
+                        门诊医生站 <span className="close-mark">×</span>
+                      </span>
+                      <span className="doctor-entry-tab doctor-entry-tab--ghost">
+                        住院医生站 <span className="close-mark">×</span>
+                      </span>
+                    </div>
+
+                    <div className="topbar-right">
+                      <Badge count={2} size="small">
+                        <span className="topbar-user">
+                          <BellOutlined style={{ fontSize: 18, color: "#fff" }} />
+                          <span>消息</span>
+                        </span>
+                      </Badge>
+                      <span className="topbar-user">孙雅奇(mzys04)</span>
+                      <Avatar className="topbar-avatar" style={{ background: "rgba(255,255,255,0.18)", color: "#fff" }}>
+                        孙
+                      </Avatar>
+                    </div>
+                  </header>
+
+                  <div className="workspace">
+                    <section className="strip strip-patient">
+                      <div className="patient-left">
+                        <Button type="primary" size="small">
+                          电子凭证
+                        </Button>
+                        <Input
+                          className="patient-input"
+                          size="small"
+                          placeholder="输入或空格读卡"
+                          suffix={<IdcardOutlined style={{ color: "#2469f2" }} />}
+                        />
+                        <div className="patient-tabs-wrap">
+                          <Tabs
+                            className="patient-card-tabs"
+                            type="card"
+                            size="small"
+                            activeKey="1"
+                            items={[
+                              { key: "1", label: "09:30 龚文宇 ×", children: null },
+                              { key: "2", label: "10:37 康金梁 ×", children: null },
+                              { key: "3", label: "11:05 王建 ×", children: null },
+                            ]}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="patient-right">
+                        <Button type="primary" size="small">
+                          患者列表
+                        </Button>
+                        <div className="patient-stats">
+                          <span className="patient-stats-item">
+                            <span className="patient-dot patient-dot--green"></span>待诊 2
+                          </span>
+                          <span className="patient-stats-item">
+                            <span className="patient-dot patient-dot--orange"></span>会诊 2
+                          </span>
+                          <span className="patient-stats-item">
+                            <span className="patient-dot patient-dot--red"></span>危机 2
+                          </span>
+                        </div>
+                        <Button size="small" icon={<MenuOutlined />}>
+                          菜单
+                        </Button>
+                      </div>
+                    </section>
+
+                    <section className="strip strip-summary">
+                      <div className="summary-main">
+                        <span className="summary-name">龚文字</span>
+                        <Tag
+                          color="orange"
+                          style={{
+                            marginInlineEnd: 0,
+                            color: "#fff",
+                            border: "none",
+                            background: "linear-gradient(180deg, #fbbc10 0%, #fb9420 100%)",
+                          }}
+                        >
+                          市级医保
+                        </Tag>
+                        <span>女</span>
+                        <span>35岁</span>
+                        <span className="summary-meta">
+                          病案号：<span className="summary-number">0611143505</span>
+                        </span>
+                        <span className="summary-meta">
+                          账户余额：<span className="summary-number">￥2308.00</span>
+                        </span>
+                        <span className="summary-meta">过敏：</span>
+                        <Tag
+                          className="summary-tag-warn"
+                          style={{
+                            marginInlineEnd: 0,
+                            color: "#e03134",
+                            background: "#ffe7e5",
+                            border: "none",
+                          }}
+                        >
+                          氨苄青霉素针、花粉...
+                        </Tag>
+                        <span className="summary-meta">用药剩余（参考）：</span>
+                        <span className="summary-number">无用药余量</span>
+                      </div>
+
+                      <div className="summary-actions">
+                        <div className="summary-links">
+                          <Button type="link" icon={<ReloadOutlined />}>刷新</Button>
+                          <Button type="link" icon={<HistoryOutlined />}>就诊历史</Button>
+                          <Button type="link" icon={<FileTextOutlined />}>门诊日志</Button>
+                          <Button type="link" icon={<AuditOutlined />} onClick={openReferralModal}>门诊转诊</Button>
+                        </div>
+                        <div className="summary-major">
+                          <Button>取消接诊</Button>
+                          <Button type="primary">一键签署</Button>
+                          <Button>挂起</Button>
+                          <Button
+                            type="primary"
+                            style={{
+                              background: "linear-gradient(180deg, #33d09d 0%, #00c484 100%)",
+                              borderColor: "#00c484",
+                            }}
+                          >
+                            诊毕
+                          </Button>
+                        </div>
+                      </div>
+                    </section>
+
+                    <main className="content-grid">
+                      <section className="record-panel-wrap">
+                        <Card className="record-panel" bordered>
+                          <div className="record-head panel-header">
+                            <Radio.Group defaultValue="初诊" size="small">
+                              <Radio value="初诊">初诊</Radio>
+                              <Radio value="复诊">复诊</Radio>
+                            </Radio.Group>
+                            <div className="record-vitals">
+                              <span>身高: <strong>175cm</strong></span>
+                              <span>体重: <strong>65kg</strong></span>
+                              <span>血压: <strong>150/95 mmHg</strong></span>
+                              <span>体温: <strong>37℃</strong></span>
+                              <span><strong>...</strong></span>
+                            </div>
+                          </div>
+
+                          <div className="record-toolbar">
+                            <Button type="link" size="small" icon={<SaveOutlined />}>保存草稿</Button>
+                            <Button type="link" size="small" icon={<CheckCircleOutlined />}>保存并签名</Button>
+                            <Button type="link" size="small" danger icon={<DeleteOutlined />}>删除</Button>
+                            <Button type="link" size="small" icon={<EyeOutlined />}>预览</Button>
+                            <Button type="link" size="small" icon={<PrinterOutlined />}>打印</Button>
+                            <Button type="link" size="small" icon={<EllipsisOutlined />}>更多</Button>
+                          </div>
+
+                          <div className="record-body">
+                            <div className="record-paper-stage">
+                              <div className="record-timeline">12-09 09:30 初诊</div>
+                              <div className="record-paper">
+                                <h1>门(急)诊病历</h1>
+                                <div className="record-paper-header">
+                                  <span>姓名：<em>龚文字</em></span>
+                                  <span>性别：<em>女</em></span>
+                                  <span>年龄：<em>35岁</em></span>
+                                  <span>科室：<em>大内科2</em></span>
+                                  <span>病历号：<em>0611143505</em></span>
+                                </div>
+                                <div className="record-paragraphs">
+                                  <p><span className="record-section-title">▏就诊时间：</span>{'{就诊时间}'}</p>
+                                  {recordParagraphs.map((line, index) => (
+                                    <p key={index}>{line}</p>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="record-side-tabs">
+                              {["常用语", "历史", "检验", "检查", "病理", "医嘱", "体征", "质控", "图片", "符号", "微生物", "康复"].map((item, index) => (
+                                <div key={item} className={`record-side-tab ${index === 0 ? "active" : ""}`}>
+                                  {item}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </Card>
+                      </section>
+
+                      <section className="right-stack">
+                        <Card className="diagnosis-panel" bordered>
+                          <div className="panel-header">
+                            <div className="diagnosis-actions">
+                              <span className="action-link"><PlusCircleOutlined />新增</span>
+                              <span className="action-link"><RollbackOutlined />撤签</span>
+                              <span className="action-link"><StopOutlined />全部作废</span>
+                              <span className="action-link"><StarOutlined />收藏</span>
+                              <span className="action-link"><AppstoreOutlined />助手</span>
+                            </div>
+                            <Space size={8}>
+                              <LeftCircleOutlined style={{ color: "#2469f2" }} />
+                              <RightCircleOutlined style={{ color: "#2469f2" }} />
+                              <UpCircleOutlined style={{ color: "#2469f2" }} />
+                              <DownCircleOutlined style={{ color: "#2469f2" }} />
+                            </Space>
+                          </div>
+
+                          <div className="diagnosis-table-wrap">
+                            <Table
+                              size="small"
+                              pagination={false}
+                              rowKey="key"
+                              columns={diagnosisColumns}
+                              dataSource={diagnosisRows}
+                              bordered
+                              scroll={{ x: "max-content" }}
+                            />
+                          </div>
+                        </Card>
+
+                        <Card className="orders-panel" bordered>
+                          <div className="orders-tabs-row">
+                            <div className="orders-tab-inline">
+                              <Tabs
+                                className="orders-card-tabs"
+                                type="card"
+                                size="small"
+                                activeKey="orders"
+                                items={[
+                                  { key: "orders", label: "医嘱" },
+                                  { key: "recipe", label: "处方" },
+                                  { key: "cost", label: "费用" },
+                                ]}
+                              />
+                            </div>
+                            <Input
+                              className="orders-aux-input"
+                              size="small"
+                              placeholder="请输入助记符，按F1获得焦点，回车显示列表"
+                            />
+                            <Button type="primary" size="small">助手</Button>
+                            <Button size="small">检查</Button>
+                            <Button size="small">检验</Button>
+                            <Button size="small">病理</Button>
+                            <Button size="small">会诊</Button>
+                            <Button size="small">手术</Button>
+                            <Button size="small" icon={<MoreOutlined />} />
+                          </div>
+
+                          <div className="orders-toolbar-row">
+                            <div className="orders-secondary-actions">
+                              <span className="action-link"><FileDoneOutlined />全部签署</span>
+                              <span className="action-link"><AuditOutlined />选签</span>
+                              <span className="action-link"><RollbackOutlined />撤签</span>
+                              <span className="action-link"><ScissorOutlined />编辑</span>
+                              <span className="action-link"><DeleteOutlined />删除</span>
+                              <span className="action-link"><FileTextOutlined />模板收藏</span>
+                              <span className="action-link"><StarOutlined />个嘱收藏</span>
+                              <span className="action-link"><SafetyCertificateOutlined />保险计划</span>
+                              <span className="action-link"><EllipsisOutlined />更多</span>
+                            </div>
+                            <Input
+                              size="small"
+                              className="orders-filter-input"
+                              placeholder="全部类型"
+                              style={{ width: 120, marginLeft: "auto" }}
+                            />
+                          </div>
+
+                          <div className="orders-table-wrap">
+                            <Table
+                              size="small"
+                              pagination={false}
+                              rowKey="key"
+                              columns={orderColumns}
+                              dataSource={orderRows}
+                              bordered
+                              scroll={{ x: "max-content" }}
+                            />
+                          </div>
+
+                          <div className="orders-footer">
+                            <span className="amount-strong">参考总费用：1631.03</span>
+                            <span>西药费：<span className="amount-strong">484.52</span></span>
+                            <span>检验费：<span className="amount-strong">130.50</span></span>
+                            <span>检查费：<span className="amount-strong">887.00</span></span>
+                            <span>草药费：<span className="amount-strong">83.67</span></span>
+                            <span>治疗费：<span className="amount-strong">45.34</span></span>
+                            <span>药占比：<span className="amount-strong">35.94%</span></span>
+                          </div>
+                        </Card>
+                      </section>
+                    </main>
+
+                    <aside className="side-toolbar">
+                      <div className="side-toolbar-head">
+                        <AppstoreOutlined />
+                        <span>功能</span>
+                      </div>
+                      <div className="side-toolbar-items">
+                        {sideTools.map((item, index) => (
+                          <div
+                            key={`${item}-${index}`}
+                            className={`side-toolbar-item ${index === 0 ? "active" : ""}`}
+                          >
+                            {item}
+                          </div>
+                        ))}
+                      </div>
+                    </aside>
+                  </div>
+
+                  <Modal
+                    title="门诊转诊申请单"
+                    open={referralOpen}
+                    width={1280}
+                    onCancel={closeReferralModal}
+                    onOk={handleReferralConfirm}
+                    okText="确认转诊"
+                    cancelText="取消"
+                    destroyOnClose={false}
+                  >
+                    <div className="referral-modal">
+                      <div className="referral-meta">
+                        <span>当前患者：<strong>龚文字</strong></span>
+                        <span>病案号：<strong>0611143505</strong></span>
+                        <span>申请类型：<strong>门诊转诊预约</strong></span>
+                        <span>说明：可按挂号时间、类型、医院、科室、医生筛选可预约号源</span>
+                      </div>
+
+                      <div className="referral-filters">
+                        <div className="referral-field">
+                          <label>挂号时间</label>
+                          <DatePicker
+                            value={referralFilters.date ? dayjs(referralFilters.date) : null}
+                            onChange={(value) =>
+                              setReferralFilters((prev) => ({
+                                ...prev,
+                                date: value ? value.format("YYYY-MM-DD") : "",
+                              }))
+                            }
+                            style={{ width: "100%" }}
+                            allowClear
+                          />
+                        </div>
+
+                        <div className="referral-field">
+                          <label>类型</label>
+                          <Select
+                            value={referralFilters.type}
+                            options={referralTypeOptions}
+                            placeholder="请选择"
+                            onChange={(value) => setReferralFilters((prev) => ({ ...prev, type: value }))}
+                            allowClear
+                          />
+                        </div>
+
+                        <div className="referral-field">
+                          <label>医院名称</label>
+                          <Select
+                            value={referralFilters.hospital}
+                            options={referralHospitalOptions}
+                            placeholder="请选择"
+                            onChange={(value) => setReferralFilters((prev) => ({ ...prev, hospital: value }))}
+                            allowClear
+                            showSearch
+                            optionFilterProp="label"
+                          />
+                        </div>
+
+                        <div className="referral-field">
+                          <label>科室</label>
+                          <Select
+                            value={referralFilters.dept}
+                            options={referralDeptOptions}
+                            placeholder="请选择"
+                            onChange={(value) => setReferralFilters((prev) => ({ ...prev, dept: value }))}
+                            allowClear
+                            showSearch
+                            optionFilterProp="label"
+                          />
+                        </div>
+
+                        <div className="referral-field">
+                          <label>医生</label>
+                          <Select
+                            value={referralFilters.doctor}
+                            options={referralDoctorOptions}
+                            placeholder="请选择"
+                            onChange={(value) => setReferralFilters((prev) => ({ ...prev, doctor: value }))}
+                            allowClear
+                            showSearch
+                            optionFilterProp="label"
+                          />
+                        </div>
+
+                        <Button type="primary" icon={<SearchOutlined />} onClick={handleReferralQuery}>
+                          查询
+                        </Button>
+                        <Button onClick={handleReferralReset}>重置</Button>
+                      </div>
+
+                      <div className="referral-helper">
+                        <span>浙江地区三甲医院示例号源，共查询到 {filteredReferralResources.length} 条资源</span>
+                        <span>
+                          {selectedReferral
+                            ? `已选择：${selectedReferral.hospital} / ${selectedReferral.dept} / ${selectedReferral.doctor}`
+                            : "请选择一条门诊资源后确认转诊"}
+                        </span>
+                      </div>
+
+                      <div className="referral-table-wrap">
+                        <Table
+                          size="small"
+                          rowKey="key"
+                          columns={referralColumns}
+                          dataSource={filteredReferralResources}
+                          pagination={false}
+                          scroll={{ x: "max-content", y: 420 }}
+                          rowSelection={{
+                            type: "radio",
+                            selectedRowKeys: selectedReferralKey ? [selectedReferralKey] : [],
+                            onChange: (keys) => setSelectedReferralKey(keys[0]),
+                          }}
+                          onRow={(record) => ({
+                            onClick: () => setSelectedReferralKey(record.key),
+                          })}
+                        />
+                      </div>
+                    </div>
+                  </Modal>
+          </div>
+        );
+      };
+
+      const App = () => (
+        <ConfigProvider theme={themeConfig}>
+          <AntApp>
+            <WorkbenchPage />
+          </AntApp>
+        </ConfigProvider>
+      );
+
+      ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+    </script>
+  </body>
+</html>
